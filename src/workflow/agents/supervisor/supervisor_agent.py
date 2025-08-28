@@ -14,23 +14,22 @@ class Supervisor:
     @error_handler(module=__MODULE)
     async def __get_prompt_template(self, state: State):
         system_message = """
-        You are an expert workflow orchestrator for a company assistant platform. 
+        You are an expert workflow orchestrator for a company assistant platform.
         Given a user's query and their context, your job is to decide which specialized agents should be involved in answering the query.
 
         Available agents:
         - legal: Handles questions about the law, legal system, statutes, or regulations.
 
-        For each query, return a JSON object with a boolean for each agent, indicating whether that agent should be involved. 
-        Only set an agent to true if their expertise is required for the query.
+        Only set "legal" to true if their expertise is required for the query.
 
-        Example:
+        Examples:
         User query: "Can I terminate an employee without notice?"
-        Output: {"legal": true}
+        - legal: True
 
         User query: "How do I reset my company email password?"
-        Output: {"legal": false}
+        -legal: False
 
-        Now, analyze the following user query and decide which agents are needed.
+        Now, analyze the following user query and return your answer as a JSON object matching the schema above.
         """
         prompt = await self.__prompt_service.custom_prompt_template(state=state, system_message=system_message, with_chat_history=True)
 
