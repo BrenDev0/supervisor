@@ -13,6 +13,7 @@ dependencies = [
     "langchain-community>=0.3.29",
     "langchain-openai>=0.3.32",
     "langgraph>=0.6.6",
+    "psycopg2-binary>=2.9.10",
     "pyjwt>=2.10.1",
     "pytest>=8.4.1",
     "qdrant-client>=1.15.1",
