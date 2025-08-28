@@ -8,6 +8,7 @@ from src.api.core.services.hashing_service import HashingService
 from src.api.core.services.request_validation_service import RequestValidationService
 from src.api.core.services.webtoken_service import WebTokenService
 from src.api.core.services.http_service import HttpService
+from src.api.core.middleware.middleware_service import MiddlewareService
 
 
 def configure_container():
@@ -45,6 +46,10 @@ def configure_container():
     )
     Container.register("prompt_service", prompt_service)
 
+    middleware_service = MiddlewareService(
+        http_service=http_service
+    )
+    Container.register("middleware_service", middleware_service)
 
 
     
