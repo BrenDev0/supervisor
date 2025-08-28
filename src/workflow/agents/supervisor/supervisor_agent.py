@@ -3,6 +3,7 @@ from langchain_openai import ChatOpenAI
 from src.workflow.state import State
 from src.workflow.services.llm_service import LlmService
 from src.utils.decorators.error_handler import error_handler
+from src.workflow.agents.supervisor.supervisor_models import SupervisorOutput
 
 class Supervisor:
     __MODULE = "context_orchestrator.agent"
@@ -13,6 +14,23 @@ class Supervisor:
     @error_handler(module=__MODULE)
     async def __get_prompt_template(self, state: State):
         system_message = """
+        You are an expert workflow orchestrator for a company assistant platform. 
+        Given a user's query and their context, your job is to decide which specialized agents should be involved in answering the query.
+
+        Available agents:
+        - legal: Handles questions about the law, legal system, statutes, or regulations.
+
+        For each query, return a JSON object with a boolean for each agent, indicating whether that agent should be involved. 
+        Only set an agent to true if their expertise is required for the query.
+
+        Example:
+        User query: "Can I terminate an employee without notice?"
+        Output: {"legal": true}
+
+        User query: "How do I reset my company email password?"
+        Output: {"legal": false}
+
+        Now, analyze the following user query and decide which agents are needed.
         """
         prompt = await self.__prompt_service.custom_prompt_template(state=state, system_message=system_message, with_chat_history=True)
 
@@ -24,8 +42,8 @@ class Supervisor:
         
         prompt = await self.__get_prompt_template(state)
         
-        
-        chain = prompt | llm
+        structured_llm  = llm.with_structured_output(SupervisorOutput)
+        chain = prompt | structured_llm
         
         response = await chain.ainvoke({"input": state["input"]})
 
