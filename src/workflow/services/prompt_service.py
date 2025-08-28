@@ -3,7 +3,7 @@ from langchain.schema import AIMessage, HumanMessage, SystemMessage
 from typing import List, Dict, Any
 from src.workflow.services.embeddings_service import EmbeddingService
 from src.workflow.state import State
-from  datetime import datetime
+
 class PromptService:
     def __init__(self, embedding_service: EmbeddingService):
         self.embedding_service = embedding_service

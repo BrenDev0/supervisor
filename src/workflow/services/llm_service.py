@@ -1,6 +1,7 @@
 from langchain_openai import ChatOpenAI
 
 class LlmService:
+    @staticmethod
     def get_llm(
         temperature: float,
         max_tokens: int = None
