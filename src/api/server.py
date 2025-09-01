@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+import os
+load_dotenv()
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
@@ -28,3 +31,5 @@ async def health():
     This endpoints verifies server status.
     """
     return {"status": "ok"}
+
+

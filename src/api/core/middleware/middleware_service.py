@@ -3,7 +3,6 @@ import jwt
 from typing import Dict
 from fastapi import Request, HTTPException
 from src.api.core.services.http_service import HttpService
-from src.api.core.database.session import get_db_session
 from fastapi.security import HTTPBearer
 
 
@@ -39,48 +38,18 @@ class MiddlewareService:
 
         
     
-    def auth(self, request: Request):
-        token_payload = self.get_token_payload(request)
-        user = self.authorize_user(token_payload)
-
-        return user
-    
-    def verify(self, request: Request):
-        token_payload = self.get_token_payload(request)
-
-        verification_code = token_payload.get("verification_code")
-
-        if verification_code is None:
-            raise HTTPException(status_code=403, detail="Unauthorized")
+    def auth(self, req: Request):
+        token_payload = self.get_token_payload(req)
+        user_id = token_payload.get("user_-id")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Unathorarized")
         
-        return verification_code
+        return user_id
+
+   
 
 
-        
     
-    def authorize_user(self, token_payload: Dict):
-        try:  
-            user_id = token_payload.get("user_id")
-
-            if user_id is None:
-                raise HTTPException(status_code=401, detail="Invlalid token")
-            
-            db = next(get_db_session())
-            
-            user = self.http_service.request_validation_service.verify_resource(
-                service_key="users_service",
-                params={"db": db, "where_col": "user_id", "identifier": user_id},
-                not_found_message="Unauthorized",
-                status_code=403
-            )
-
-            if user is None:
-                raise HTTPException(status_code=403, detail="Unauthorized")
-            
-            return user
-    
-        except ValueError as e:
-            raise HTTPException(status_code=401, detail=str(e))
 
 
     

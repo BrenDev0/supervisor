@@ -4,11 +4,11 @@ from src.dependencies.container import Container
 from src.api.core.middleware.middleware_service import MiddlewareService
 
 
-async def auth_middleware(request: Request):
+async def auth_middleware(req: Request):
     middleware_service: MiddlewareService = Container.resolve("middleware_service")
-    user = middleware_service.auth(request)
+    user = middleware_service.auth(req)
 
-    request.state.user = user
+    req.state.user = user
     return user
     
         
