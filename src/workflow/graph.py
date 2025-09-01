@@ -24,6 +24,7 @@ def create_graph():
     def router(state: State):
         pass
 
+
     @error_handler(module=module)
     async def legal_assistant(state: State): 
         headers = generate_hmac_headers(secret=hmac_secret)
@@ -41,14 +42,11 @@ def create_graph():
         return response["final_reponse"]
 
 
-    
-    async def responder(state: State):
-        pass
+
         
 
     graph.add_node("supervisor", supervisor)
     graph.add_node("router", router)
-    graph.add_node("legal_assistant", legal_assistant)
     
 
     graph.add_edge(START, "supervisor")

@@ -28,8 +28,6 @@ class Supervisor:
 
         User query: "How do I reset my company email password?"
         -legal: False
-
-        Now, analyze the following user query and return your answer as a JSON object matching the schema above.
         """
         prompt = await self.__prompt_service.custom_prompt_template(state=state, system_message=system_message, with_chat_history=True)
 
