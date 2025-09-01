@@ -28,3 +28,5 @@ async def health():
     This endpoints verifies server status.
     """
     return {"status": "ok"}
+
+
