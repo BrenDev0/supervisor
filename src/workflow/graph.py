@@ -35,6 +35,11 @@ def create_graph(worker_state: WorkerState):
         
         selected_agent_ids = []
 
+        ## send frontend list of agents responding
+        websocket.send_json({
+            "agents": selected_agent_ids
+        })
+
         async def handle_agent(agent_id):
             agent_endpoint = ""
             payload = worker_state.model_dump()  
@@ -68,7 +73,7 @@ def create_graph(worker_state: WorkerState):
                         "ai_message": agent_response
                     }
                 )
-        
+
         await asyncio.gather(*(handle_agent(agent_id) for agent_id in selected_agent_ids))
 
         return state        
