@@ -1,8 +1,6 @@
 import os
 import httpx
 import asyncio
-from langchain_openai import ChatOpenAI
-from typing import List
 from src.workflow.state import State
 from src.dependencies.container import Container
 from langgraph.graph import StateGraph, END, START
@@ -41,6 +39,7 @@ def create_graph(worker_state: WorkerState):
             agent_endpoint = ""
             payload = worker_state.model_dump()  
 
+            ## interacts with the agent
             async with httpx.AsyncClient() as client:
                 response = await client.post(
                     f"{agent_endpoint}/interactions/internal/interact",
@@ -49,11 +48,13 @@ def create_graph(worker_state: WorkerState):
                 )
                 agent_response = response.json()
 
+            ## sends response to frontend
             await websocket.send_json({
                 "agent_id": agent_id,
                 "response": agent_response
             })
 
+            ## saves messages and updates redis 
             hmac_secret = os.getenv("HMAC_SECRET")
             main_server_endpoint = os.getenv("MAIN_SERVER_ENDPOINT")
             headers = generate_hmac_headers(hmac_secret)
@@ -67,7 +68,7 @@ def create_graph(worker_state: WorkerState):
                         "ai_message": agent_response
                     }
                 )
-
+        
         await asyncio.gather(*(handle_agent(agent_id) for agent_id in selected_agent_ids))
 
         return state        
