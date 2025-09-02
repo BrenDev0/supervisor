@@ -5,5 +5,6 @@ from src.workflow.agents.supervisor.supervisor_models import SupervisorOutput
 
 class State(TypedDict):
     input: str
+    chat_id: UUID
     available_agents: List[UUID]       
     selected_agents: SupervisorOutput          

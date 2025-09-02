@@ -1,5 +1,6 @@
 import os
 import httpx
+import asyncio
 from langchain_openai import ChatOpenAI
 from typing import List
 from src.workflow.state import State
@@ -9,11 +10,16 @@ from src.utils.http.get_hmac_header import generate_hmac_headers
 from src.utils.decorators.error_handler import error_handler
 from src.workflow.agents.supervisor.supervisor_agent import Supervisor
 from src.api.modules.interactions.interactions_models import WorkerState
+from src.api.modules.websocket.websocket_service import WebsocketService
+from fastapi import WebSocket
 
 def create_graph(worker_state: WorkerState):
     graph = StateGraph(State)
     module = "graph"
-    hmac_secret = os.getenv("HMAC_SECRET")
+    AGENT_MAP = {
+        "legal": "",
+        "financial": ""
+    }
 
     async def supervisor(state: State):
         supervisor: Supervisor = Container.resolve("supervisor_agent")
@@ -22,39 +28,56 @@ def create_graph(worker_state: WorkerState):
 
         return {"selected_agents": response} 
 
-    def router(state: State):
-        pass
-
 
     @error_handler(module=module)
-    async def legal_assistant(state: State): 
-        headers = generate_hmac_headers(secret=hmac_secret)
-        endpoint = os.getenv("LEGAL_ASSISTANT_ENDPOINT")
-        payload = worker_state.model_dump()
-
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                f"{endpoint}/interactions/secure/interact",  
-                json=payload,
-                headers=headers,
-                timeout=30.0
-            )
-        
-        return response["final_reponse"]
-
-
+    async def router(state: State):
+        websocket_service: WebsocketService = Container.resolve("websocket_service")
+        websocket: WebSocket = websocket_service.get_connection(state["chat_id"]) 
 
         
+        selected_agent_ids = []
+
+        async def handle_agent(agent_id):
+            agent_endpoint = ""
+            payload = worker_state.model_dump()  
+
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{agent_endpoint}/interactions/internal/interact",
+                    json=payload,
+                    timeout=30.0
+                )
+                agent_response = response.json()
+
+            await websocket.send_json({
+                "agent_id": agent_id,
+                "response": agent_response
+            })
+
+            hmac_secret = os.getenv("HMAC_SECRET")
+            main_server_endpoint = os.getenv("MAIN_SERVER_ENDPOINT")
+            headers = generate_hmac_headers(hmac_secret)
+            async with httpx.AsyncClient() as client:
+                await client.post(
+                    f"https://{main_server_endpoint}/interactions/internal/outgoing/{state["chat_id"]}",
+                    headers=headers,
+                    json={
+                        "human_message": state["input"],
+                        "agent_id": agent_id,
+                        "ai_message": agent_response
+                    }
+                )
+
+        await asyncio.gather(*(handle_agent(agent_id) for agent_id in selected_agent_ids))
+
+        return state        
 
     graph.add_node("supervisor", supervisor)
     graph.add_node("router", router)
     
 
     graph.add_edge(START, "supervisor")
+    graph.add_edge("router", END)
 
     
-
-
-
-
     return graph.compile()
