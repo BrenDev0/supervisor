@@ -44,7 +44,7 @@ def create_graph(worker_state: WorkerState):
             agent_endpoint = ""
             payload = worker_state.model_dump()  
 
-            ## interacts with the agent
+            ## interacts with the worker agent
             async with httpx.AsyncClient() as client:
                 response = await client.post(
                     f"{agent_endpoint}/interactions/internal/interact",
