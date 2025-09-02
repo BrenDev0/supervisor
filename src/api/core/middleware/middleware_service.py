@@ -40,11 +40,12 @@ class MiddlewareService:
     
     def auth(self, req: Request):
         token_payload = self.get_token_payload(req)
-        user_id = token_payload.get("user_-id")
-        if not user_id:
+        user_id = token_payload.get("user_id")
+        company_id = token_payload.get("company_id")
+        if not user_id or not company_id:
             raise HTTPException(status_code=401, detail="Unathorarized")
         
-        return user_id
+        return user_id, company_id
 
    
 
