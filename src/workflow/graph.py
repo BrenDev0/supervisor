@@ -8,8 +8,9 @@ from langgraph.graph import StateGraph, END, START
 from src.utils.http.get_hmac_header import generate_hmac_headers
 from src.utils.decorators.error_handler import error_handler
 from src.workflow.agents.supervisor.supervisor_agent import Supervisor
+from src.api.modules.interactions.interactions_models import WorkerState
 
-def create_graph():
+def create_graph(worker_state: WorkerState):
     graph = StateGraph(State)
     module = "graph"
     hmac_secret = os.getenv("HMAC_SECRET")
@@ -29,7 +30,7 @@ def create_graph():
     async def legal_assistant(state: State): 
         headers = generate_hmac_headers(secret=hmac_secret)
         endpoint = os.getenv("LEGAL_ASSISTANT_ENDPOINT")
-        payload = {}
+        payload = worker_state.model_dump()
 
         async with httpx.AsyncClient() as client:
             response = await client.post(

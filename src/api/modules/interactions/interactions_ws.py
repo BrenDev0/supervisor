@@ -8,8 +8,8 @@ from src.api.modules.websocket.websocket_service import WebsocketService
 router = APIRouter()
 
 
-@router.websocket("/ws/secure/interact/{connection_id}")
-async def websocket_interact(websocket: WebSocket, connection_id: UUID):
+@router.websocket("/ws/secure/interact/{chat_id}")
+async def websocket_interact(websocket: WebSocket, chat_id: UUID):
     await websocket.accept()
     params = websocket.query_params
     signature = params.get("x-signature")
@@ -20,13 +20,13 @@ async def websocket_interact(websocket: WebSocket, connection_id: UUID):
         return
 
     websocket_service: WebsocketService = Container.resolve("websocket_service")
-    websocket_service.add_connection(connection_id, websocket)
+    websocket_service.add_connection(chat_id, websocket)
     
-    print(f'Websocket connection: {connection_id} opened.')
+    print(f'Websocket connection: {chat_id} opened.')
     try:
         while True: 
             await websocket.receive_text()
 
     except WebSocketDisconnect:
-        websocket_service.remove_connection(connection_id)
-        print(f'Websocket connection: {connection_id} closed.')
+        websocket_service.remove_connection(chat_id)
+        print(f'Websocket connection: {chat_id} closed.')

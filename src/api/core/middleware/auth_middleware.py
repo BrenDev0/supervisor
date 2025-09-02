@@ -6,9 +6,10 @@ from src.api.core.middleware.middleware_service import MiddlewareService
 
 async def auth_middleware(req: Request):
     middleware_service: MiddlewareService = Container.resolve("middleware_service")
-    user = middleware_service.auth(req)
+    user, company = middleware_service.auth(req)
 
     req.state.user = user
+    req.state.company = company
     return user
     
         

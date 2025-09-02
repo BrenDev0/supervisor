@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from src.dependencies.configure_container import configure_container
+from src.api.modules.interactions import interactions_routes, interactions_ws
 
 
 @asynccontextmanager
@@ -33,3 +34,5 @@ async def health():
     return {"status": "ok"}
 
 
+app.include_router(interactions_routes.router)
+app.include_router(interactions_ws.router)
