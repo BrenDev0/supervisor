@@ -60,4 +60,10 @@ def secure_interact(
     worker_state: WorkerState = Depends(get_state_factory), # handles user auth
     graph = Depends(get_graph) 
 ):
+    """
+    ## Interaction request
+
+    Use this endpoint to interact with the agents.
+    Only company marked tokens have access to this endpoint.
+    """
     pass
