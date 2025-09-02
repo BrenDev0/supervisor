@@ -11,7 +11,8 @@ from src.api.modules.interactions.interactions_models import WorkerState, Intera
 
 router = APIRouter(
     prefix="/interactions",
-    dependencies=[Depends(security)]
+    dependencies=[Depends(security)],
+    tags=["Interactions"]
 )
 
 def get_state_factory(chat_id: UUID):
@@ -55,6 +56,7 @@ def get_graph(state: WorkerState = Depends(get_state_factory)):
 def secure_interact(
     chat_id: UUID,
     req: Request,
+    data: InteractionRequest = Body(...), # added for docs
     worker_state: WorkerState = Depends(get_state_factory), # handles user auth
     graph = Depends(get_graph) 
 ):
