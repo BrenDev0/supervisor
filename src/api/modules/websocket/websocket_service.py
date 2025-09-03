@@ -1,21 +1,26 @@
 from fastapi import WebSocket
+from typing import Union
+from uuid import UUID
 
 class WebsocketService:
     def __init__(self):
         self.active_connections = {}
 
-    def add_connection(self, connection_id:str, websocket: WebSocket):
-        self.active_connections[connection_id] = websocket
-        print(f"connection {connection_id} added.")
+    def add_connection(self, connection_id: Union[UUID, str], websocket: WebSocket):
+        key = str(connection_id)
+        self.active_connections[key] = websocket
+        print(f"connection {key} added.")
         return
     
-    def get_connection(self, connection_id: str) -> WebSocket:
-        connection = self.active_connections.get(connection_id)
+    def get_connection(self, connection_id: Union[UUID, str]) -> WebSocket:
+        key = str(connection_id)
+        connection = self.active_connections.get(key)
         if not connection:
-            print(f"Connection {connection_id} not found in get_connection()")
+            print(f"Connection {key} not found in get_connection()")
 
         return connection
 
     def remove_connection(self, connection_id: str):
-        self.active_connections.pop(connection_id, None)
-        print(f'Connection: {connection_id} was removed.')
+        key = str(connection_id)
+        self.active_connections.pop(key, None)
+        print(f'Connection: {key} was removed.')
