@@ -7,6 +7,7 @@ class InteractionRequest(BaseModel):
 
 class WorkerState(BaseModel):
     input: str
+    agents: List[UUID]
     chat_id: UUID
     company_id: UUID
     chat_history: List[Dict[str, Any]]

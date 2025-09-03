@@ -18,16 +18,16 @@ class Supervisor:
         Given a user's query and their context, your job is to decide which specialized agents should be involved in answering the query.
 
         Available agents:
-        - legal: Handles questions about the law, legal system, statutes, or regulations.
+        - 95e222ef-c637-42d3-a81e-955beeeb0ba2: Handles questions about the law, legal system, statutes, or regulations.
 
-        Only set "legal" to true if their expertise is required for the query.
+        Only set an agent's UUID to true if their expertise is required for the query. 
 
         Examples:
         User query: "Can I terminate an employee without notice?"
-        - legal: True
+        Output: {"95e222ef-c637-42d3-a81e-955beeeb0ba2": true}
 
         User query: "How do I reset my company email password?"
-        -legal: False
+        Output: {"95e222ef-c637-42d3-a81e-955beeeb0ba2": false}
         """
         prompt = await self.__prompt_service.custom_prompt_template(state=state, system_message=system_message, with_chat_history=True)
 
