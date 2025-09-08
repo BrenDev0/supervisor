@@ -11,6 +11,7 @@ from src.api.core.middleware.middleware_service import MiddlewareService
 from src.api.core.services.request_validation_service import RequestValidationService
 from src.api.modules.websocket.websocket_service import WebsocketService
 from src.api.core.services.webtoken_service import WebTokenService
+from src.api.core.middleware.middleware_service import MiddlewareService
 
 
 

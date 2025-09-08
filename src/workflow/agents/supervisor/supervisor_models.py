@@ -1,6 +1,6 @@
-from pydantic import RootModel
-from typing import Dict
-from uuid import UUID
+from pydantic import BaseModel
+from typing import Dict, List
 
-class SupervisorOutput(RootModel[Dict[UUID, bool]]):
-    pass
+
+class SupervisorOutput(BaseModel):
+    selected_agents: List[str]

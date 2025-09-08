@@ -4,16 +4,13 @@ from typing import List, Dict, Any
 from src.workflow.state import State
 
 class PromptService:
-    async def custom_prompt_template(self, state: State, system_message: str, with_chat_history: bool = False, with_context: bool = False, context_collection: str = None):
+    async def custom_prompt_template(self, state: State, system_message: str, with_chat_history: bool = False):
         messages = [
             SystemMessage(content=system_message)
         ]
 
         if with_chat_history:
             messages = self.add_chat_history(state, messages)
-
-        if with_context & context_collection != None:
-            messages = await self.add_context(input=state["input"], messages=messages, collection_name=context_collection)
 
         messages.append(HumanMessagePromptTemplate.from_template('{input}'))
 

@@ -4,8 +4,8 @@ from src.api.core.models.http_models import CommonHttpReponse
 from src.workflow.state import State
 
 class InteractionsController:
+    @staticmethod
     def interact_request(
-        self,
         background_tasks: BackgroundTasks,
         worker_state: WorkerState,
         graph

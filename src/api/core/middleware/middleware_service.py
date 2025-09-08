@@ -30,8 +30,7 @@ class MiddlewareService:
             raise HTTPException(status_code=403, detail="Expired Token")
         
         except jwt.InvalidTokenError:
-            print("token invalid")
-            raise HTTPException(status_code=401, detail="Invlalid token")
+            raise HTTPException(status_code=401, detail="Invalid token")
         
         except ValueError as e:
             raise HTTPException(status_code=401, detail=str(e))

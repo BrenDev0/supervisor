@@ -9,11 +9,12 @@ def create_graph(worker_state: WorkerState):
     graph = StateGraph(State)
  
     async def supervisor(state: State):
-        supervisor: Supervisor = Container.resolve("supervisor_agent")
+        supervisor: Supervisor = Container.resolve("supervisor")
 
         response = await supervisor.interact(state=state)
+        print(response, "selcted agents::::::")
 
-        return {"selected_agents": response} 
+        return {"selected_agents": response.selected_agents}
 
 
     async def orchestrator(state: State):

@@ -20,14 +20,14 @@ class Supervisor:
         Available agents:
         - 95e222ef-c637-42d3-a81e-955beeeb0ba2: Handles questions about the law, legal system, statutes, or regulations.
 
-        Only set an agent's UUID to true if their expertise is required for the query. 
+        Only include an agent's UUID in the list if their expertise is required for the query.
 
         Examples:
         User query: "Can I terminate an employee without notice?"
-        Output: {"95e222ef-c637-42d3-a81e-955beeeb0ba2": true}
+        Output: {"selected_agents": ["95e222ef-c637-42d3-a81e-955beeeb0ba2"]}
 
         User query: "How do I reset my company email password?"
-        Output: {"95e222ef-c637-42d3-a81e-955beeeb0ba2": false}
+        Output: {"selected_agents": []}
         """
         prompt = await self.__prompt_service.custom_prompt_template(state=state, system_message=system_message, with_chat_history=True)
 
@@ -39,7 +39,7 @@ class Supervisor:
         
         prompt = await self.__get_prompt_template(state)
         
-        structured_llm  = llm.with_structured_output(SupervisorOutput)
+        structured_llm  = llm.with_structured_output(SupervisorOutput, method="function_calling")
         chain = prompt | structured_llm
         
         response = await chain.ainvoke({"input": state["input"]})
