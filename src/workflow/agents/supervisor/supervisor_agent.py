@@ -39,7 +39,7 @@ class Supervisor:
         
         prompt = await self.__get_prompt_template(state)
         
-        structured_llm  = llm.with_structured_output(SupervisorOutput, method="function_calling")
+        structured_llm  = llm.with_structured_output(SupervisorOutput)
         chain = prompt | structured_llm
         
         response = await chain.ainvoke({"input": state["input"]})
