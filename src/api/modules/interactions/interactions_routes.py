@@ -54,8 +54,6 @@ async def get_worker_state(
         worker_state = WorkerState(**res_data)
         return worker_state
 
-    return get_state
-
 def get_graph(state: WorkerState = Depends(get_worker_state)):
     return create_graph(worker_state=state)
 
